@@ -1,0 +1,16 @@
+[package]
+name = "parsercher"
+version = "1.0.0"
+authors = ["kkmtyyz <45735463+kkmtyyz@users.noreply.github.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/kkmtyyz/parsercher"
+documentation = "https://docs.rs/parsercher"
+description = "Parses and searches Tag documents. (e.g. HTML, XML)"
+keywords = ["tag", "parse", "search", "html", "xml"]
+categories = ["parser-implementations"]
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
