@@ -93,7 +93,7 @@ if let Ok(dom) = parsercher::parse(&html) {
 ```
 
 output:
-```json
+```
 Dom {
     dom_type: Tag,
     tag: Some(
