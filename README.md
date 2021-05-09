@@ -1,7 +1,7 @@
 # parsercher
 
 [![Crate](https://img.shields.io/crates/v/parsercher.svg)](https://crates.io/crates/parsercher)
-[![API](https://img.shields.io/badge/api-1.0.0-green.svg)](https://docs.rs/parsercher)
+[![API](https://img.shields.io/badge/api-2.0.0-green.svg)](https://docs.rs/parsercher)
 
 **Parses and searches Tag documents. (e.g. HTML, XML)**
 
