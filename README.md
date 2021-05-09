@@ -22,7 +22,6 @@ parsercher = "2.0.0"
 **Example of getting text from HTML.**  
 Create a tree of Dom structure from HTML and get the text of `li` tag that value of `class` attribute is `target`.
 ```rust
-use std::collections::HashMap;
 use parsercher;
 use parsercher::dom::Tag;
 
