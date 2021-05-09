@@ -13,7 +13,7 @@ parsercher parses documents written in tags such as HTML and XML.
 Add this to your `Cargo.toml`:
 ```
 [dependencies]
-parsercher = "1.0.0"
+parsercher = "2.0.0"
 ```
 
 ## License
@@ -45,9 +45,7 @@ let html = r#"
 
 if let Ok(root_dom) = parsercher::parse(&html) {
     let mut needle = Tag::new("li".to_string());
-    let mut attr = HashMap::new();
-    attr.insert("class".to_string(), "target".to_string());
-    needle.set_attr(attr);
+    needle.set_attr("class", "target");
 
     if let Some(texts) = parsercher::search_text_from_tag_children(&root_dom, &needle) {
         assert_eq!(texts.len(), 2);

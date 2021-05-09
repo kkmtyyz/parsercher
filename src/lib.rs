@@ -6,9 +6,9 @@
 //!
 //! # Usage
 //! Add this to your `Cargo.toml`:
-//! ```
+//! ```text
 //! [dependencies]
-//! parsercher = "1.0.0"
+//! parsercher = "2.0.0"
 //! ```
 //!
 //! # Examples
@@ -38,9 +38,7 @@
 //!
 //! if let Ok(root_dom) = parsercher::parse(&html) {
 //!     let mut needle = Tag::new("li".to_string());
-//!     let mut attr = HashMap::new();
-//!     attr.insert("class".to_string(), "target".to_string());
-//!     needle.set_attr(attr);
+//!     needle.set_attr("class", "target");
 //!
 //!     if let Some(texts) = parsercher::search_text_from_tag_children(&root_dom, &needle) {
 //!         assert_eq!(texts.len(), 2);
@@ -86,7 +84,7 @@
 //! ```
 //!
 //! output:
-//! ```
+//! ```text
 //! Dom {
 //!     dom_type: Tag,
 //!     tag: Some(
@@ -415,7 +413,7 @@ mod searcher;
 pub use parser::parse;
 pub use parser::print_dom_tree;
 
-pub use searcher::satisfy_sufficient_condition;
+pub use dom::tag::satisfy_sufficient_condition;
 pub use searcher::search_tag;
 pub use searcher::search_tag_from_name;
 pub use searcher::search_text_from_tag_children;

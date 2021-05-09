@@ -32,7 +32,7 @@ use input::Input;
 ///
 /// output:
 ///
-/// ```
+/// ```text
 /// Dom {
 ///     dom_type: Tag,
 ///     tag: Some(
@@ -219,7 +219,7 @@ fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
         tag.set_terminated(true);
     }
 
-    tag.set_attr(attr_map);
+    tag.set_attrs(attr_map);
 
     Ok(tag)
 }
@@ -386,7 +386,7 @@ fn parse_doctype(input: &mut Input) -> Result<Dom, String> {
     let end = bgn + "html".len();
     input.set_cursor(end); // move cursor to '>'
     attr.insert(input.get_string(bgn, end)?, String::new());
-    tag.set_attr(attr);
+    tag.set_attrs(attr);
 
     let mut dom = Dom::new(DomType::Tag);
     dom.set_tag(tag);
@@ -533,7 +533,8 @@ pub fn create_dom_tree(dom_vec: &mut Vec<Dom>, parent: &mut Dom) {
 ///
 /// # Examples
 /// Output the following HTML.
-/// ```
+/// ```rust
+/// let html = r#"
 /// <head>
 ///   <meta charset="UTF-8">
 ///   <title>sample</title>
@@ -541,12 +542,13 @@ pub fn create_dom_tree(dom_vec: &mut Vec<Dom>, parent: &mut Dom) {
 /// <body>
 ///   <h1>Hello, world!</h1>
 /// </body>
-/// ```
-/// ```rust,no_run
-/// parsercher::print_dom_tree(&dom);
+/// "#;
+/// if let Ok(dom) = parsercher::parse(&html) {
+///     parsercher::print_dom_tree(&dom);
+/// }
 /// ```
 /// output:
-/// ```
+/// ```text
 /// <root>
 ///   <head>
 ///     <meta charset="UTF-8">
@@ -569,9 +571,9 @@ fn print_dom_tree_exe(dom: &Dom, depth: usize) {
         DomType::Tag => {
             let tag = dom.get_tag().unwrap();
             print!("<{}", tag.get_name());
-            if let Some(attr) = tag.get_attr() {
-                for (name, value) in attr.iter() {
-                    print!(" {}=\"{}\"", name, value);
+            if let Some(attrs) = tag.get_attrs() {
+                for (attr, value) in attrs.iter() {
+                    print!(" {}=\"{}\"", attr, value);
                 }
             }
             println!(">");

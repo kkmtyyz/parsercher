@@ -9,7 +9,7 @@ pub use tag::Tag;
 pub use text::Text;
 
 /// Type of Dom structure.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum DomType {
     Tag,
     Text,

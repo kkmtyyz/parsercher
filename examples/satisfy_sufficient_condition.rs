@@ -1,24 +1,17 @@
 use parsercher;
 use parsercher::dom::Tag;
-use std::collections::HashMap;
 
 fn main() {
     let mut p = Tag::new("h1".to_string());
-    let mut attr = HashMap::new();
-    attr.insert("class".to_string(), "target".to_string());
-    p.set_attr(attr);
+    p.set_attr("class", "target");
 
     let mut q = Tag::new("h1".to_string());
-    let mut attr = HashMap::new();
-    attr.insert("id".to_string(), "q".to_string());
-    attr.insert("class".to_string(), "target".to_string());
-    q.set_attr(attr);
+    q.set_attr("id", "q");
+    q.set_attr("class", "target");
 
     assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), true);
 
     let mut q = Tag::new("h1".to_string());
-    let mut attr = HashMap::new();
-    attr.insert("id".to_string(), "q".to_string());
-    q.set_attr(attr);
+    q.set_attr("id", "q");
     assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), false);
 }

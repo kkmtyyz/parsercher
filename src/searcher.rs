@@ -1,70 +1,13 @@
+use crate::dom::tag;
 use crate::dom::tag::Tag;
 use crate::dom::Dom;
 use crate::dom::DomType;
-
-/// Returns true if p is a sufficient condition for q.
-/// `p => q`
-///
-/// # Examples
-/// ```rust
-/// let mut p = Tag::new("h1".to_string());
-/// let mut attr = HashMap::new();
-/// attr.insert("class".to_string(), "target".to_string());
-/// p.set_attr(attr);
-///
-/// let mut q = Tag::new("h1".to_string());
-/// let mut attr = HashMap::new();
-/// attr.insert("id".to_string(), "q".to_string());
-/// attr.insert("class".to_string(), "target".to_string());
-/// q.set_attr(attr);
-///
-/// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), true);
-///
-/// let mut q = Tag::new("h1".to_string());
-/// let mut attr = HashMap::new();
-/// attr.insert("id".to_string(), "q".to_string());
-/// q.set_attr(attr);
-/// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), false);
-/// ```
-pub fn satisfy_sufficient_condition(p: &Tag, q: &Tag) -> bool {
-    let mut satisfied = false;
-    // name
-    if q.get_name() == p.get_name() {
-        satisfied = true;
-    }
-
-    // attr
-    if satisfied {
-        if let Some(p_attr) = p.get_attr() {
-            match q.get_attr() {
-                Some(q_attr) => {
-                    for (p_key, p_value) in p_attr.iter() {
-                        match q_attr.get(p_key) {
-                            Some(q_value) => {
-                                if p_value != "" && p_value != q_value {
-                                    satisfied = false;
-                                    break;
-                                }
-                            }
-                            None => {
-                                satisfied = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-                None => satisfied = false,
-            }
-        }
-    }
-    satisfied
-}
 
 /// Returns Tag structures from which the needle is a sufficient condition from the Dom structure tree.
 ///
 /// # Examples
 /// Get `li` tags that `class` attribute value is `target` from the following HTML.
-/// ```
+/// ```text
 /// <ol>
 ///    <li class="target">first</li>
 ///    <li>second</li>
@@ -72,17 +15,15 @@ pub fn satisfy_sufficient_condition(p: &Tag, q: &Tag) -> bool {
 /// </ol>
 /// ```
 ///
-/// ```rust,no_run
+/// ```compile_fail
 /// let mut needle = Tag::new("li".to_string());
-/// let mut attr = HashMap::new();
-/// attr.insert("class".to_string(), "target".to_string());
-/// needle.set_attr(attr);
+/// needle.set_attr("class", "target");
 /// if let Some(tags) = parsercher::search_tag(&dom, &needle) {
 ///     println!("{:#?}", tags);
 /// }
 /// ```
 /// output:
-/// ```
+/// ```text
 /// [
 ///     Tag {
 ///         name: "li",
@@ -118,7 +59,7 @@ pub fn search_tag(dom: &Dom, needle: &Tag) -> Option<Vec<Tag>> {
 
 fn search_tag_exe(res: &mut Vec<Tag>, dom: &Dom, needle: &Tag) {
     if let Some(tag) = dom.get_tag() {
-        if satisfy_sufficient_condition(needle, tag) {
+        if tag::satisfy_sufficient_condition(needle, tag) {
             res.push(tag.clone());
         }
 
@@ -134,7 +75,7 @@ fn search_tag_exe(res: &mut Vec<Tag>, dom: &Dom, needle: &Tag) {
 ///
 /// # Examples
 /// Get only the `h2` tag from the following HTML.
-/// ```
+/// ```text
 /// <body>
 ///    <h1 class="h1">section1</h1>
 ///    <h2 class="h2">section2</h2>
@@ -142,14 +83,14 @@ fn search_tag_exe(res: &mut Vec<Tag>, dom: &Dom, needle: &Tag) {
 /// </body>
 /// ```
 ///
-/// ```rust,no_run
+/// ```compile_fail
 /// if let Some(tags) = parsercher::search_tag_from_name(&dom, "h2") {
 ///     println!("{:#?}", tags);
 /// }
 /// ```
 ///
 /// output:
-/// ```
+/// ```text
 /// [
 ///     Tag {
 ///         name: "h2",
@@ -191,7 +132,7 @@ fn search_tag_from_name_exe(res: &mut Vec<Tag>, dom: &Dom, name: &str) {
 ///
 /// # Examples
 /// Get just texts of `li` tags that `class` attribute value is `target` from the following HTML.
-/// ```
+/// ```text
 /// <ol>
 ///    <li class="target">first</li>
 ///    <li>second</li>
@@ -199,7 +140,7 @@ fn search_tag_from_name_exe(res: &mut Vec<Tag>, dom: &Dom, name: &str) {
 /// </ol>
 /// ```
 ///
-/// ```
+/// ```compile_fail
 /// let mut needle = Tag::new("li".to_string());
 /// let mut attr = HashMap::new();
 /// attr.insert("class".to_string(), "target".to_string());
@@ -221,7 +162,7 @@ pub fn search_text_from_tag_children(dom: &Dom, needle: &Tag) -> Option<Vec<Stri
 
 fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &Tag) {
     if let Some(tag) = dom.get_tag() {
-        if satisfy_sufficient_condition(needle, tag) {
+        if tag::satisfy_sufficient_condition(needle, tag) {
             if let Some(children) = dom.get_children() {
                 for child in children {
                     if let Some(text) = child.get_text() {
