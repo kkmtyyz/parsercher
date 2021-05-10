@@ -39,7 +39,7 @@ impl Dom {
         }
     }
 
-    /// Create the new doot dom.
+    /// Create the new root dom.
     ///
     /// The root dom has a Tag structure whose name is root.
     pub fn new_root() -> Dom {
