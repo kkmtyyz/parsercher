@@ -495,7 +495,7 @@ fn search_terminator(dom_vec: &mut Vec<Dom>, starter: &Tag) -> Option<usize> {
 }
 
 /// If the tag is not terminated, add it to the child, otherwise add it to the child.
-pub fn create_dom_tree(dom_vec: &mut Vec<Dom>, parent: &mut Dom) {
+fn create_dom_tree(dom_vec: &mut Vec<Dom>, parent: &mut Dom) {
     while !dom_vec.is_empty() {
         let mut dom = dom_vec.remove(0);
 
