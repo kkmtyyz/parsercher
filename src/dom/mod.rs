@@ -39,6 +39,16 @@ impl Dom {
         }
     }
 
+    /// Create the new doot dom.
+    ///
+    /// The root dom has a Tag structure whose name is root.
+    pub fn new_root() -> Dom {
+        let tag = Tag::new(String::from("root"));
+        let mut dom = Dom::new(DomType::Tag);
+        dom.set_tag(tag);
+        dom
+    }
+
     fn domtype_str(&self) -> String {
         match self.dom_type {
             DomType::Tag => return String::from("Tag"),

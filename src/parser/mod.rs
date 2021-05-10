@@ -106,16 +106,9 @@ pub fn parse(doc: &str) -> Result<Dom, String> {
     let mut dom_vec = create_dom_vec(&mut input)?;
     //debug_print_dom_vec(&dom_vec);
 
-    let mut root_dom = create_root_dom();
+    let mut root_dom = Dom::new_root();
     create_dom_tree(&mut dom_vec, &mut root_dom);
     Ok(root_dom)
-}
-
-fn create_root_dom() -> Dom {
-    let tag = Tag::new(String::from("root"));
-    let mut dom = Dom::new(DomType::Tag);
-    dom.set_tag(tag);
-    dom
 }
 
 /// Returns the value of the tag's attribute.
