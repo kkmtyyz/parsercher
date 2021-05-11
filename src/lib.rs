@@ -15,7 +15,6 @@
 //! **Example of getting text from HTML.**  
 //! Create a tree of Dom structure from HTML and get the text of `li` tag that value of `class` attribute is `target`.
 //! ```rust
-//! use std::collections::HashMap;
 //! use parsercher;
 //! use parsercher::dom::Tag;
 //!
@@ -414,6 +413,7 @@ pub use parser::parse;
 pub use parser::print_dom_tree;
 
 pub use dom::tag::satisfy_sufficient_condition;
+pub use searcher::search_dom;
 pub use searcher::search_tag;
 pub use searcher::search_tag_from_name;
 pub use searcher::search_text_from_tag_children;
