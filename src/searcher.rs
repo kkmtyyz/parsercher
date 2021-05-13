@@ -201,7 +201,9 @@ fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &
 /// <body>
 ///   <ul id="list1" class="targetList">
 ///     <li class="key1">1-1</li>
-///     <li class="key2"><span>1-2</span></li>
+///     <li class="key2">
+///       <span>1-2</span>
+///     </li>
 ///   </ul>
 ///
 ///   <ul id="list2">

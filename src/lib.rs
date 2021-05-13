@@ -1,14 +1,15 @@
 //!# Parses and searches Tag documents. (e.g. HTML, XML)
 //!
 //! parsercher parses documents written in tags such as HTML and XML.
-//! * Create a tree of Dom structures from the tag document.
-//! * Search for tags and text in the tree of Dom structures.
+//! * Create a Dom structure tree from the tag document.
+//! * Search for tags and text from the Dom structure tree.
+//! * Search subtrees from the Dom structure tree.
 //!
 //! # Usage
 //! Add this to your `Cargo.toml`:
 //! ```text
 //! [dependencies]
-//! parsercher = "2.0.0"
+//! parsercher = "2.1.0"
 //! ```
 //!
 //! # Examples
@@ -45,6 +46,90 @@
 //!         assert_eq!(texts[1], "therd".to_string());
 //!     }
 //! }
+//! ```
+//!
+//! **Example of searching a subtree from the Dom structure tree.**
+//!
+//! Find a subtree that has a `ul` tag whose value in the `class` attribute is `targetList` and
+//! two `li` tags under it. Also, the values of the `class` attribute of the `li` tag must be
+//! `key1` and` key2`, respectively.
+//!
+//! Looking for:
+//! ```text
+//! <ul class="targetList">
+//!   <li class="key1"></li>
+//!   <li class="key2"></li>
+//! </ul>
+//! ```
+//!
+//! ```rust
+//! use parsercher;
+//!
+//! let doc = r#"
+//!   <body>
+//!     <ul id="list1" class="targetList">
+//!       <li class="key1">1-1</li>
+//!       <li class="key2">
+//!         <span>1-2</span>
+//!       </li>
+//!     </ul>
+//!
+//!     <ul id="list2">
+//!       <li class="key1">2-1</li>
+//!       <li>2-2</li>
+//!     </ul>
+//!
+//!     <div>
+//!       <div>
+//!         <ul class="targetList">
+//!           <ul id="list3" class="targetList">
+//!             <li class="key1">3-1</li>
+//!             <li class="item">3-2</li>
+//!             <li class="key2">3-3</li>
+//!           </ul>
+//!         </ul>
+//!       </div>
+//!     </div>
+//!
+//!     <ul id="list4">
+//!       <li class="key1">4-1</li>
+//!       <li class="key2">4-2</li>
+//!     </ul>
+//!   </body>
+//! "#;
+//!
+//! let root_dom = parsercher::parse(&doc).unwrap();
+//!
+//! let needle = r#"
+//! <ul class="targetList">
+//!   <li class="key1"></li>
+//!   <li class="key2"></li>
+//! </ul>
+//! "#;
+//! let needle_dom = parsercher::parse(&needle).unwrap();
+//! // Remove `root`dom of needle_dom
+//! let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
+//!
+//! if let Some(dom) = parsercher::search_dom(&root_dom, &needle_dom) {
+//!     parsercher::print_dom_tree(&dom);
+//! }
+//! ```
+//! output:
+//! ```text
+//! <root>
+//!   <ul id="list1" class="targetList">
+//!     <li class="key1">
+//!       TEXT: "1-1"
+//!     <li class="key2">
+//!       <span>
+//!         TEXT: "1-2"
+//!   <ul id="list3" class="targetList">
+//!     <li class="key1">
+//!       TEXT: "3-1"
+//!     <li class="item">
+//!       TEXT: "3-2"
+//!     <li class="key2">
+//!       TEXT: "3-3"
 //! ```
 //!
 //! **More complex examples of Dom structure tree**
