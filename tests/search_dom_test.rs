@@ -27,11 +27,13 @@ fn search_dom() {
 
     <div>
       <div>
+      <ul class="targetList">
         <ul id="list3" class="targetList">
           <li class="key1">3-1</li>
           <li class="item">3-2</li>
           <li class="key2">3-3</li>
         </ul>
+      </ul>
       </div>
     </div>
 
@@ -44,7 +46,7 @@ fn search_dom() {
 </html>
 "#;
 
-    let root_dom = parsercher::parse(&html).unwrap();
+    let dom = parsercher::parse(&html).unwrap();
     //parsercher::print_dom_tree(&root_dom);
 
     // <ul class="targetList">
@@ -73,7 +75,13 @@ fn search_dom() {
     ul_dom.add_child(li_dom2);
     //parsercher::print_dom_tree(&ul_dom);
 
-    if let Some(dom) = parsercher::search_dom(&root_dom, &ul_dom) {
-        parsercher::print_dom_tree(&dom);
-    }
+    let root_dom = parsercher::search_dom(&dom, &ul_dom).unwrap();
+
+    // root
+    assert_eq!(DomType::Tag, root_dom.dom_type);
+    let tag = root_dom.get_tag().unwrap();
+    assert_eq!("root".to_string(), tag.get_name());
+    assert_eq!(None, tag.get_attrs());
+
+    // ul
 }

@@ -196,11 +196,8 @@ fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &
 ///
 /// ```rust
 /// use parsercher;
-/// use parsercher::dom::Dom;
-/// use parsercher::dom::DomType;
-/// use parsercher::dom::Tag;
 ///
-/// let doc = r#"
+/// let html = r#"
 /// <body>
 ///   <ul id="list1" class="targetList">
 ///     <li class="key1">1-1</li>
@@ -214,10 +211,12 @@ fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &
 ///
 ///   <div>
 ///     <div>
-///       <ul id="list3" class="targetList">
-///         <li class="key1">3-1</li>
-///         <li class="item">3-2</li>
-///         <li class="key2">3-3</li>
+///       <ul class="targetList">
+///         <ul id="list3" class="targetList">
+///           <li class="key1">3-1</li>
+///           <li class="item">3-2</li>
+///           <li class="key2">3-3</li>
+///         </ul>
 ///       </ul>
 ///     </div>
 ///   </div>
@@ -226,44 +225,30 @@ fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &
 ///     <li class="key1">4-1</li>
 ///     <li class="key2">4-2</li>
 ///   </ul>
+///
 /// </body>
 /// "#;
 ///
-/// // <ul class="targetList">
-/// let mut ul_dom = Dom::new(DomType::Tag);
-/// let mut ul_tag = Tag::new("ul".to_string());
-/// ul_tag.set_attr("class", "targetList");
-/// ul_dom.set_tag(ul_tag);
+/// let root_dom = parsercher::parse(&html).unwrap();
 ///
-/// // <li class="key1">
-/// let mut li_dom1 = Dom::new(DomType::Tag);
-/// let mut li_tag = Tag::new("li".to_string());
-/// li_tag.set_attr("class", "key1");
-/// li_dom1.set_tag(li_tag);
+/// let needle = r#"
+/// <ul class="targetList">
+///   <li class="key1"></li>
+///   <li class="key2"></li>
+/// </ul>
+/// "#;
+/// let needle_dom = parsercher::parse(&needle).unwrap();
+/// // Remove `root`dom of needle_dom
+/// let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
 ///
-/// // <li class="key2">
-/// let mut li_dom2 = Dom::new(DomType::Tag);
-/// let mut li_tag = Tag::new("li".to_string());
-/// li_tag.set_attr("class", "key2");
-/// li_dom2.set_tag(li_tag);
-///
-/// // <ul class="targetList">
-/// //   <li class="key1"></li>
-/// //   <li class="key2"></li>
-/// // </ul>
-/// ul_dom.add_child(li_dom1);
-/// ul_dom.add_child(li_dom2);
-///
-/// if let Ok(root_dom) = parsercher::parse(&doc) {
-///     if let Some(res) = parsercher::search_dom(&root_dom, &ul_dom) {
-///         parsercher::print_dom_tree(&res);
-///     }
+/// if let Some(dom) = parsercher::search_dom(&root_dom, &needle_dom) {
+///     parsercher::print_dom_tree(&dom);
 /// }
 /// ```
 /// output:
 /// ```text
 /// <root>
-///   <ul class="targetList" id="list1">
+///   <ul id="list1" class="targetList">
 ///     <li class="key1">
 ///       TEXT: "1-1"
 ///     <li class="key2">
@@ -279,105 +264,26 @@ fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &
 /// ```
 pub fn search_dom(dom: &Dom, needle: &Dom) -> Option<Dom> {
     let mut res = Dom::new_root();
-    search_dom_exe(&mut res, dom, needle, false);
+    search_dom_exe(&mut res, dom, needle);
     match res.get_children() {
         Some(_) => return Some(res),
         None => return None,
     }
 }
 
-/// # Arguments
-///
-/// * `parent_match` - True if the parents of `needle` match.
-fn search_dom_exe(res: &mut Dom, dom: &Dom, needle: &Dom, parent_match: bool) -> bool {
-    // Comparison of Dom structures
-    let mut dom_match = false;
-    if dom.dom_type == needle.dom_type {
-        match dom.dom_type {
-            DomType::Tag => {
-                if let Some(tag) = dom.get_tag() {
-                    if let Some(needle_tag) = needle.get_tag() {
-                        dom_match = tag::satisfy_sufficient_condition(needle_tag, tag);
-                    }
-                }
-            }
-            DomType::Text => {
-                if let Some(text) = dom.get_text() {
-                    if let Some(needle_text) = needle.get_text() {
-                        if text.get_text() == needle_text.get_text() {
-                            dom_match = true;
-                        }
-                    }
-                }
-            }
-            DomType::Comment => {
-                if let Some(comment) = dom.get_comment() {
-                    if let Some(needle_comment) = needle.get_comment() {
-                        if comment.get_comment() == needle_comment.get_comment() {
-                            dom_match = true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if dom_match {
-        // If the parent of `dom` do not match and there are no children of` needle`,
-        // then `needle` is only leaves, so clone all the remaining trees.
-        if let None = needle.get_children() {
-            if !parent_match {
-                res.add_child(dom.clone());
-                return true;
-            }
-        }
-
-        if let Some(dom_children) = dom.get_children() {
-            if let Some(needle_children) = needle.get_children() {
-                if dom_children.len() < needle_children.len() {
-                    return false;
-                }
-            }
-        }
-
-        // Count the number of dom children that match the `needle` children.
-        let mut child_match_cnt = 0;
-        if let Some(dom_children) = dom.get_children() {
-            if let Some(needle_children) = needle.get_children() {
-                for dom_child in dom_children.iter() {
-                    for needle_child in needle_children.iter() {
-                        if search_dom_exe(res, dom_child, needle_child, dom_match) {
-                            child_match_cnt += 1;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Returns false if dom doesn't have all the `needle` children.
-        if let Some(needle_children) = needle.get_children() {
-            if child_match_cnt < needle_children.len() {
-                return false;
-            }
-        }
-
-        // If the parents of `dom` do not match, then` dom` is the root,
-        // so clone all the remaining trees.
-        if !parent_match {
+fn search_dom_exe(res: &mut Dom, dom: &Dom, needle: &Dom) {
+    if Dom::p_implies_q(needle, dom) {
+        if Dom::p_implies_q_tree(needle, dom) {
             res.add_child(dom.clone());
-            return true;
-        }
-
-        if dom_match {
-            return true;
-        }
-    } else {
-        if let Some(children) = dom.get_children() {
-            for child in children.iter() {
-                search_dom_exe(res, child, needle, dom_match);
-            }
+            return;
         }
     }
-
-    false
+    match dom.get_children() {
+        Some(children) => {
+            for child in children.iter() {
+                search_dom_exe(res, child, needle);
+            }
+        }
+        None => return,
+    }
 }

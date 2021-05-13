@@ -128,4 +128,236 @@ impl Dom {
     pub fn get_children(&self) -> Option<&Vec<Box<Dom>>> {
         self.children.as_ref()
     }
+
+    /// Returns true if p is a sufficient condition for q.
+    /// `p => q`
+    ///
+    /// # Examples
+    /// ```rust
+    /// use parsercher::dom::DomType;
+    /// use parsercher::dom::Dom;
+    /// use parsercher::dom::Tag;
+    ///
+    /// let mut p = Dom::new(DomType::Tag);
+    /// let mut tag = Tag::new("h1".to_string());
+    /// tag.set_attr("class", "target");
+    /// p.set_tag(tag);
+    ///
+    /// let mut q = Dom::new(DomType::Tag);
+    /// let mut tag = Tag::new("h1".to_string());
+    /// tag.set_attr("id", "q");
+    /// tag.set_attr("class", "target");
+    /// q.set_tag(tag);
+    ///
+    /// assert_eq!(Dom::p_implies_q(&p, &q), true);
+    ///
+    /// let mut q = Dom::new(DomType::Tag);
+    /// let mut tag = Tag::new("h1".to_string());
+    /// tag.set_attr("id", "q");
+    /// q.set_tag(tag);
+    ///
+    /// assert_eq!(Dom::p_implies_q(&p, &q), false);
+    /// ```
+    pub fn p_implies_q(p: &Dom, q: &Dom) -> bool {
+        if q.dom_type != p.dom_type {
+            return false;
+        }
+        match q.dom_type {
+            DomType::Tag => {
+                if let Some(q_tag) = q.get_tag() {
+                    if let Some(p_tag) = p.get_tag() {
+                        return tag::satisfy_sufficient_condition(p_tag, q_tag);
+                    }
+                }
+            }
+            DomType::Text => {
+                if let Some(q_text) = q.get_text() {
+                    if let Some(p_text) = p.get_text() {
+                        if q_text.get_text().contains(p_text.get_text()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            DomType::Comment => {
+                if let Some(q_comment) = q.get_comment() {
+                    if let Some(p_comment) = p.get_comment() {
+                        if q_comment.get_comment().contains(p_comment.get_comment()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        false
+    }
+
+    /// Returns true if p is a sufficient condition for q.
+    /// Compare the entire tree. `p => q`
+    ///
+    /// # Examples
+    /// ```rust
+    /// use parsercher;
+    /// use parsercher::dom::Dom;
+    ///
+    /// // p
+    /// let p = r#"
+    /// <h1>
+    ///   <div></div>
+    ///   <ul>
+    ///     <li></li>
+    ///   </ul>
+    /// </h1>
+    /// "#;
+    ///
+    /// let p_dom = parsercher::parse(&p).unwrap();
+    /// // Remove `root`dom of p_dom
+    /// let p_dom = p_dom.get_children().unwrap().get(0).unwrap();
+    ///
+    /// // q
+    /// let q = r#"
+    /// <h1>
+    ///   <div id="divId"></div>
+    ///   <ul>
+    ///     <li></li>
+    ///   </ul>
+    ///   <span></span>
+    /// </h1>
+    /// "#;
+    ///
+    /// let q_dom = parsercher::parse(&q).unwrap();
+    /// // Remove `root`dom of p_dom
+    /// let q_dom = q_dom.get_children().unwrap().get(0).unwrap();
+    ///
+    /// assert_eq!(Dom::p_implies_q_tree(&p_dom, &q_dom), true);
+    /// ```
+    pub fn p_implies_q_tree(p: &Dom, q: &Dom) -> bool {
+        if !Dom::p_implies_q(p, q) {
+            return false;
+        }
+        if let None = p.get_children() {
+            return true;
+        }
+        if let None = q.get_children() {
+            return false;
+        }
+
+        let p_children = p.get_children().unwrap();
+        let q_children = q.get_children().unwrap();
+        for p_child in p_children.iter() {
+            let mut child_match = false;
+            for q_child in q_children.iter() {
+                if Dom::p_implies_q_tree(p_child, q_child) {
+                    child_match = true;
+                    break;
+                }
+            }
+            // If the same child as p is not in the child of q.
+            if !child_match {
+                return false;
+            }
+        }
+        true
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sufficient_condition() {
+        let mut p = Dom::new(DomType::Tag);
+        let mut tag = Tag::new("h1".to_string());
+        tag.set_attr("class", "target");
+        p.set_tag(tag);
+
+        let mut q = Dom::new(DomType::Tag);
+        let mut tag = Tag::new("h1".to_string());
+        tag.set_attr("id", "q");
+        tag.set_attr("class", "target");
+        q.set_tag(tag);
+
+        assert_eq!(Dom::p_implies_q(&p, &q), true);
+    }
+
+    #[test]
+    fn not_sufficient_condition() {
+        let mut p = Dom::new(DomType::Tag);
+        let mut tag = Tag::new("h1".to_string());
+        tag.set_attr("class", "target");
+        p.set_tag(tag);
+
+        let mut q = Dom::new(DomType::Tag);
+        let mut tag = Tag::new("h1".to_string());
+        tag.set_attr("id", "q");
+        q.set_tag(tag);
+
+        assert_eq!(Dom::p_implies_q(&p, &q), false);
+    }
+
+    #[test]
+    fn text_sufficient_condition() {
+        let mut p = Dom::new(DomType::Text);
+        let text = Text::new("def".to_string());
+        p.set_text(text);
+
+        let mut q = Dom::new(DomType::Text);
+        let text = Text::new("abcdefghi".to_string());
+        q.set_text(text);
+
+        assert_eq!(Dom::p_implies_q(&p, &q), true);
+    }
+
+    #[test]
+    fn p_implies_q_tree_test() {
+        // <h1>
+        //   <div>
+        //   <ul>
+        //     <li>
+        let mut p = Dom::new(DomType::Tag);
+        let h1_tag = Tag::new("h1".to_string());
+        p.set_tag(h1_tag);
+        // div
+        let mut div_dom = Dom::new(DomType::Tag);
+        let div_tag = Tag::new("div".to_string());
+        div_dom.set_tag(div_tag);
+        p.add_child(div_dom);
+        // ul
+        let mut ul_dom = Dom::new(DomType::Tag);
+        let ul_tag = Tag::new("ul".to_string());
+        ul_dom.set_tag(ul_tag);
+        // li
+        let mut li_dom = Dom::new(DomType::Tag);
+        let li_tag = Tag::new("li".to_string());
+        li_dom.set_tag(li_tag);
+        ul_dom.add_child(li_dom);
+        p.add_child(ul_dom);
+
+        // <h1>
+        //   <div id="divid">
+        //   <ul>
+        //     <li>
+        let mut q = Dom::new(DomType::Tag);
+        let h1_tag = Tag::new("h1".to_string());
+        q.set_tag(h1_tag);
+        // div
+        let mut div_dom = Dom::new(DomType::Tag);
+        let mut div_tag = Tag::new("div".to_string());
+        div_tag.set_attr("id", "divid");
+        div_dom.set_tag(div_tag);
+        q.add_child(div_dom);
+        // ul
+        let mut ul_dom = Dom::new(DomType::Tag);
+        let ul_tag = Tag::new("ul".to_string());
+        ul_dom.set_tag(ul_tag);
+        // li
+        let mut li_dom = Dom::new(DomType::Tag);
+        let li_tag = Tag::new("li".to_string());
+        li_dom.set_tag(li_tag);
+        ul_dom.add_child(li_dom);
+        q.add_child(ul_dom);
+
+        assert_eq!(Dom::p_implies_q_tree(&p, &q), true);
+    }
 }

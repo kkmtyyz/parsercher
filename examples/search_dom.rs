@@ -1,7 +1,4 @@
 use parsercher;
-use parsercher::dom::Dom;
-use parsercher::dom::DomType;
-use parsercher::dom::Tag;
 
 fn main() {
     let html = r#"
@@ -25,10 +22,12 @@ fn main() {
 
     <div>
       <div>
-        <ul id="list3" class="targetList">
-          <li class="key1">3-1</li>
-          <li class="item">3-2</li>
-          <li class="key2">3-3</li>
+        <ul class="targetList">
+          <ul id="list3" class="targetList">
+            <li class="key1">3-1</li>
+            <li class="item">3-2</li>
+            <li class="key2">3-3</li>
+          </ul>
         </ul>
       </div>
     </div>
@@ -43,35 +42,18 @@ fn main() {
 "#;
 
     let root_dom = parsercher::parse(&html).unwrap();
-    //parsercher::print_dom_tree(&root_dom);
 
-    // <ul class="targetList">
-    let mut ul_dom = Dom::new(DomType::Tag);
-    let mut ul_tag = Tag::new("ul".to_string());
-    ul_tag.set_attr("class", "targetList");
-    ul_dom.set_tag(ul_tag);
+    let needle = r#"
+<ul class="targetList">
+  <li class="key1"></li>
+  <li class="key2"></li>
+</ul>
+"#;
+    let needle_dom = parsercher::parse(&needle).unwrap();
+    // Remove `root`dom of needle_dom
+    let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
 
-    // <li class="key1">
-    let mut li_dom1 = Dom::new(DomType::Tag);
-    let mut li_tag = Tag::new("li".to_string());
-    li_tag.set_attr("class", "key1");
-    li_dom1.set_tag(li_tag);
-
-    // <li class="key2">
-    let mut li_dom2 = Dom::new(DomType::Tag);
-    let mut li_tag = Tag::new("li".to_string());
-    li_tag.set_attr("class", "key2");
-    li_dom2.set_tag(li_tag);
-
-    // <ul class="targetList">
-    //   <li class="key1"></li>
-    //   <li class="key2"></li>
-    // </ul>
-    ul_dom.add_child(li_dom1);
-    ul_dom.add_child(li_dom2);
-    //parsercher::print_dom_tree(&ul_dom);
-
-    if let Some(dom) = parsercher::search_dom(&root_dom, &ul_dom) {
+    if let Some(dom) = parsercher::search_dom(&root_dom, &needle_dom) {
         parsercher::print_dom_tree(&dom);
     }
 }
