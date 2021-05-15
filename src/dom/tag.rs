@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 /// A structure that represents a tag element.
 /// grammar: `<[/]name [attr[="value"]] [/]>`
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Tag {
     name: String,
     attrs: Option<HashMap<String, String>>,
@@ -250,5 +250,33 @@ mod tests {
         q.set_attr("id", "q");
 
         assert_eq!(satisfy_sufficient_condition(&p, &q), false);
+    }
+
+    #[test]
+    fn eq_test() {
+        let mut a = Tag::new("h1".to_string());
+        a.set_attr("id", "idA");
+        a.set_attr("class", "classA");
+
+        let mut b = Tag::new("h1".to_string());
+        b.set_attr("id", "idA");
+        b.set_attr("class", "classA");
+
+        assert_eq!(a == b, true);
+        assert_eq!(a != b, false);
+    }
+
+    #[test]
+    fn ne_test() {
+        let mut a = Tag::new("h1".to_string());
+        a.set_attr("id", "idA");
+        a.set_attr("class", "classA");
+
+        let mut b = Tag::new("h2".to_string());
+        b.set_attr("id", "idB");
+        b.set_attr("class", "classB");
+
+        assert_eq!(a == b, false);
+        assert_eq!(a != b, true);
     }
 }

@@ -17,7 +17,7 @@ pub enum DomType {
 }
 
 /// A structure that represents the parsing result of a tag document.
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone,)]
 pub struct Dom {
     /// Type of Dom structure
     pub dom_type: DomType,
@@ -263,6 +263,7 @@ impl Dom {
 
 #[cfg(test)]
 mod tests {
+    use crate::parser;
     use super::*;
 
     #[test]
@@ -359,5 +360,73 @@ mod tests {
         q.add_child(ul_dom);
 
         assert_eq!(Dom::p_implies_q_tree(&p, &q), true);
+    }
+
+    #[test]
+    fn eq_test() {
+        let a = r#"
+        <head>
+          <title>sample</title>
+        </head>
+        <body>
+          <h1>section</h1>
+          <ul>
+            <li>list1</li>
+            <li>list2</li>
+          </ul>
+        </body>
+        "#;
+        let a_dom = parser::parse(&a);
+
+        let b = r#"
+        <head>
+          <title>sample</title>
+        </head>
+        <body>
+          <h1>section</h1>
+          <ul>
+            <li>list1</li>
+            <li>list2</li>
+          </ul>
+        </body>
+        "#;
+        let b_dom = parser::parse(&b);
+
+        assert_eq!(a_dom == b_dom, true);
+        assert_eq!(a_dom != b_dom, false);
+    }
+
+    #[test]
+    fn ne_test() {
+        let a = r#"
+        <head>
+          <title>sample</title>
+        </head>
+        <body>
+          <h1>section</h1>
+          <ul>
+            <li>list1</li>
+            <li>list2</li>
+          </ul>
+        </body>
+        "#;
+        let a_dom = parser::parse(&a);
+
+        let b = r#"
+        <head>
+          <title>sample</title>
+        </head>
+        <body>
+          <h1>section</h1>
+          <ul>
+            <li>list1</li>
+            <li>list3</li>
+          </ul>
+        </body>
+        "#;
+        let b_dom = parser::parse(&b);
+
+        assert_eq!(a_dom == b_dom, false);
+        assert_eq!(a_dom != b_dom, true);
     }
 }
