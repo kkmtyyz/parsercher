@@ -1,8 +1,6 @@
 extern crate parsercher;
 
-use parsercher::dom::Dom;
 use parsercher::dom::DomType;
-use parsercher::dom::Tag;
 
 #[test]
 fn search_dom() {
@@ -49,33 +47,19 @@ fn search_dom() {
     let dom = parsercher::parse(&html).unwrap();
     //parsercher::print_dom_tree(&root_dom);
 
-    // <ul class="targetList">
-    let mut ul_dom = Dom::new(DomType::Tag);
-    let mut ul_tag = Tag::new("ul".to_string());
-    ul_tag.set_attr("class", "targetList");
-    ul_dom.set_tag(ul_tag);
+    let needle = r#"
+<ul class="targetList">
+  <li class="key1"></li>
+  <li class="key2"></li>
+</ul>
+"#;
 
-    // <li class="key1">
-    let mut li_dom1 = Dom::new(DomType::Tag);
-    let mut li_tag = Tag::new("li".to_string());
-    li_tag.set_attr("class", "key1");
-    li_dom1.set_tag(li_tag);
+    let needle_dom = parsercher::parse(&needle).unwrap();
+    // Remove `root`dom of needle_dom
+    let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
 
-    // <li class="key2">
-    let mut li_dom2 = Dom::new(DomType::Tag);
-    let mut li_tag = Tag::new("li".to_string());
-    li_tag.set_attr("class", "key2");
-    li_dom2.set_tag(li_tag);
 
-    // <ul class="targetList">
-    //   <li class="key1"></li>
-    //   <li class="key2"></li>
-    // </ul>
-    ul_dom.add_child(li_dom1);
-    ul_dom.add_child(li_dom2);
-    //parsercher::print_dom_tree(&ul_dom);
-
-    let root_dom = parsercher::search_dom(&dom, &ul_dom).unwrap();
+    let root_dom = parsercher::search_dom(&dom, &needle_dom).unwrap();
 
     // root
     assert_eq!(DomType::Tag, root_dom.dom_type);
@@ -83,5 +67,90 @@ fn search_dom() {
     assert_eq!("root".to_string(), tag.get_name());
     assert_eq!(None, tag.get_attrs());
 
-    // ul
+    // ul: list1
+    let ul_dom = root_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Tag, ul_dom.dom_type);
+    let tag = ul_dom.get_tag().unwrap();
+    assert_eq!("ul".to_string(), tag.get_name());
+    assert_eq!(Some("list1".to_string()), tag.get_attr("id"));
+    assert_eq!(Some("targetList".to_string()), tag.get_attr("class"));
+
+    // li key1
+    let li_dom = ul_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Tag, li_dom.dom_type);
+    let tag = li_dom.get_tag().unwrap();
+    assert_eq!("li".to_string(), tag.get_name());
+    assert_eq!(Some("key1".to_string()), tag.get_attr("class"));
+
+    // text: 1-1
+    let text_dom = li_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Text, text_dom.dom_type);
+    let text = text_dom.get_text().unwrap();
+    assert_eq!("1-1", text.get_text());
+
+    // li key2
+    let li_dom = ul_dom.get_children().unwrap().get(1).unwrap().clone();
+    assert_eq!(DomType::Tag, li_dom.dom_type);
+    let tag = li_dom.get_tag().unwrap();
+    assert_eq!("li".to_string(), tag.get_name());
+    assert_eq!(Some("key2".to_string()), tag.get_attr("class"));
+
+    // span
+    let span_dom = li_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Tag, span_dom.dom_type);
+    let tag = span_dom.get_tag().unwrap();
+    assert_eq!("span".to_string(), tag.get_name());
+
+    // text: 1-2
+    let text_dom = span_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Text, text_dom.dom_type);
+    let text = text_dom.get_text().unwrap();
+    assert_eq!("1-2", text.get_text());
+
+    // ul: list3
+    let ul_dom = root_dom.get_children().unwrap().get(1).unwrap().clone();
+    assert_eq!(DomType::Tag, ul_dom.dom_type);
+    let tag = ul_dom.get_tag().unwrap();
+    assert_eq!("ul".to_string(), tag.get_name());
+    assert_eq!(Some("list3".to_string()), tag.get_attr("id"));
+    assert_eq!(Some("targetList".to_string()), tag.get_attr("class"));
+
+    // li key1
+    let li_dom = ul_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Tag, li_dom.dom_type);
+    let tag = li_dom.get_tag().unwrap();
+    assert_eq!("li".to_string(), tag.get_name());
+    assert_eq!(Some("key1".to_string()), tag.get_attr("class"));
+
+    // text: 3-1
+    let text_dom = li_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Text, text_dom.dom_type);
+    let text = text_dom.get_text().unwrap();
+    assert_eq!("3-1", text.get_text());
+
+    // li item
+    let li_dom = ul_dom.get_children().unwrap().get(1).unwrap().clone();
+    assert_eq!(DomType::Tag, li_dom.dom_type);
+    let tag = li_dom.get_tag().unwrap();
+    assert_eq!("li".to_string(), tag.get_name());
+    assert_eq!(Some("item".to_string()), tag.get_attr("class"));
+
+    // text: 3-2
+    let text_dom = li_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Text, text_dom.dom_type);
+    let text = text_dom.get_text().unwrap();
+    assert_eq!("3-2", text.get_text());
+
+    // li key2
+    let li_dom = ul_dom.get_children().unwrap().get(2).unwrap().clone();
+    assert_eq!(DomType::Tag, li_dom.dom_type);
+    let tag = li_dom.get_tag().unwrap();
+    assert_eq!("li".to_string(), tag.get_name());
+    assert_eq!(Some("key2".to_string()), tag.get_attr("class"));
+
+    // text: 3-3
+    let text_dom = li_dom.get_children().unwrap().get(0).unwrap().clone();
+    assert_eq!(DomType::Text, text_dom.dom_type);
+    let text = text_dom.get_text().unwrap();
+    assert_eq!("3-3", text.get_text());
 }
