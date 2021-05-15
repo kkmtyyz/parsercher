@@ -1,12 +1,25 @@
 # Changelog
 
+## [3.0.0] - 2021-05-16
+
+### Additions
+
+- Added new API `parsercher::search_attr()`.
+- Added PartialEq to Dom Types.
+
+### Changes
+
+- Changed the `satisfy_sufficient_condition()` to the `Dom::p_implies_q()`.
+- Changed constructor arguments to slices (Tag, Text, Comment).
+
+
 ## [2.1.0] - 2021-05-14
 
 ### Additions
 
-- Add new API `parsercher::search_dom()`
-- Add new API `Dom::p_implies_q()`
-- Add new API `Dom::p_implies_q_tree()`
+- Added new API `parsercher::search_dom()`
+- Added new API `Dom::p_implies_q()`
+- Added new API `Dom::p_implies_q_tree()`
 
 
 ## [2.0.0] - 2021-05-09
@@ -26,6 +39,7 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
+[3.0.0]: https://github.com/kkmtyyz/parsercher/compare/2.1.0...3.0.0
 [2.1.0]: https://github.com/kkmtyyz/parsercher/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/kkmtyyz/parsercher/compare/1.0.0...2.0.0
 [1.0.0]: https://github.com/kkmtyyz/parsercher/compare/1.0.0
