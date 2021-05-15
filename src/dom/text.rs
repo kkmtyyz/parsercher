@@ -11,8 +11,10 @@ impl Text {
     ///
     /// # Arguments
     /// * `text` - If `<h1>section</h1>`, then `section`.
-    pub fn new(text: String) -> Text {
-        Text { text }
+    pub fn new(text: &str) -> Text {
+        Text {
+            text: String::from(text),
+        }
     }
 
     /// Returns the text.
@@ -28,16 +30,16 @@ mod tests {
 
     #[test]
     fn eq_test() {
-        let a = Text::new("a text".to_string());
-        let b = Text::new("a text".to_string());
+        let a = Text::new("a text");
+        let b = Text::new("a text");
         assert_eq!(a == b, true);
         assert_eq!(a != b, false);
     }
 
     #[test]
     fn ne_test() {
-        let a = Text::new("a text".to_string());
-        let b = Text::new("b text".to_string());
+        let a = Text::new("a text");
+        let b = Text::new("b text");
         assert_eq!(a != b, true);
         assert_eq!(a == b, false);
     }

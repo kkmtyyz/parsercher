@@ -17,9 +17,9 @@ impl Tag {
     ///
     /// # Arguments
     /// * `name` - If `<h1 class="section1">`, then `h1`.
-    pub fn new(name: String) -> Tag {
+    pub fn new(name: &str) -> Tag {
         Tag {
-            name,
+            name: String::from(name),
             attrs: None,
             terminated: false,
             terminator: false,
@@ -43,7 +43,7 @@ impl Tag {
     /// use std::collections::HashMap;
     /// use parsercher::dom::Tag;
     ///
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// let mut attrs: HashMap<String, String> = HashMap::new();
     /// attrs.insert("id".to_string(), "title".to_string());
     /// attrs.insert("class".to_string(), "section1".to_string());
@@ -61,7 +61,7 @@ impl Tag {
     /// ```
     /// use parsercher::dom::Tag;
     ///
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("id", "title");
     /// tag.set_attr("class", "section1");
     ///
@@ -81,7 +81,7 @@ impl Tag {
     /// ```
     /// use parsercher::dom::Tag;
     ///
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("id", "title");
     /// tag.set_attr("class", "section1");
     /// ```
@@ -105,7 +105,7 @@ impl Tag {
     /// ```
     /// use parsercher::dom::Tag;
     ///
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("id", "title");
     /// tag.set_attr("class", "section1");
     ///
@@ -163,16 +163,16 @@ impl Tag {
 /// use std::collections::HashMap;
 /// use parsercher::dom::Tag;
 ///
-/// let mut p = Tag::new("h1".to_string());
+/// let mut p = Tag::new("h1");
 /// p.set_attr("class", "target");
 ///
-/// let mut q = Tag::new("h1".to_string());
+/// let mut q = Tag::new("h1");
 /// q.set_attr("id", "q");
 /// q.set_attr("class", "target");
 ///
 /// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), true);
 ///
-/// let mut q = Tag::new("h1".to_string());
+/// let mut q = Tag::new("h1");
 /// q.set_attr("id", "q");
 ///
 /// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), false);
@@ -217,13 +217,13 @@ mod tests {
 
     #[test]
     fn get_empty_attr() {
-        let tag = Tag::new("h1".to_string());
+        let tag = Tag::new("h1");
         assert_eq!(None, tag.get_attr("class"));
     }
 
     #[test]
     fn set_attr() {
-        let mut tag = Tag::new("h1".to_string());
+        let mut tag = Tag::new("h1");
         tag.set_attr("class", "section1");
         assert_eq!(Some("section1".to_string()), tag.get_attr("class"));
         assert_eq!(None, tag.get_attr("id"));
@@ -231,10 +231,10 @@ mod tests {
 
     #[test]
     fn sufficient_condition() {
-        let mut p = Tag::new("h1".to_string());
+        let mut p = Tag::new("h1");
         p.set_attr("class", "target");
 
-        let mut q = Tag::new("h1".to_string());
+        let mut q = Tag::new("h1");
         q.set_attr("id", "q");
         q.set_attr("class", "target");
 
@@ -243,10 +243,10 @@ mod tests {
 
     #[test]
     fn not_sufficient_condition() {
-        let mut p = Tag::new("h1".to_string());
+        let mut p = Tag::new("h1");
         p.set_attr("class", "target");
 
-        let mut q = Tag::new("h1".to_string());
+        let mut q = Tag::new("h1");
         q.set_attr("id", "q");
 
         assert_eq!(satisfy_sufficient_condition(&p, &q), false);
@@ -254,11 +254,11 @@ mod tests {
 
     #[test]
     fn eq_test() {
-        let mut a = Tag::new("h1".to_string());
+        let mut a = Tag::new("h1");
         a.set_attr("id", "idA");
         a.set_attr("class", "classA");
 
-        let mut b = Tag::new("h1".to_string());
+        let mut b = Tag::new("h1");
         b.set_attr("id", "idA");
         b.set_attr("class", "classA");
 
@@ -268,11 +268,11 @@ mod tests {
 
     #[test]
     fn ne_test() {
-        let mut a = Tag::new("h1".to_string());
+        let mut a = Tag::new("h1");
         a.set_attr("id", "idA");
         a.set_attr("class", "classA");
 
-        let mut b = Tag::new("h2".to_string());
+        let mut b = Tag::new("h2");
         b.set_attr("id", "idB");
         b.set_attr("class", "classB");
 

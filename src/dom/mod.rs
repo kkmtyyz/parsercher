@@ -43,7 +43,7 @@ impl Dom {
     ///
     /// The root dom has a Tag structure whose name is root.
     pub fn new_root() -> Dom {
-        let tag = Tag::new(String::from("root"));
+        let tag = Tag::new("root");
         let mut dom = Dom::new(DomType::Tag);
         dom.set_tag(tag);
         dom
@@ -139,12 +139,12 @@ impl Dom {
     /// use parsercher::dom::Tag;
     ///
     /// let mut p = Dom::new(DomType::Tag);
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("class", "target");
     /// p.set_tag(tag);
     ///
     /// let mut q = Dom::new(DomType::Tag);
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("id", "q");
     /// tag.set_attr("class", "target");
     /// q.set_tag(tag);
@@ -152,7 +152,7 @@ impl Dom {
     /// assert_eq!(Dom::p_implies_q(&p, &q), true);
     ///
     /// let mut q = Dom::new(DomType::Tag);
-    /// let mut tag = Tag::new("h1".to_string());
+    /// let mut tag = Tag::new("h1");
     /// tag.set_attr("id", "q");
     /// q.set_tag(tag);
     ///
@@ -269,12 +269,12 @@ mod tests {
     #[test]
     fn sufficient_condition() {
         let mut p = Dom::new(DomType::Tag);
-        let mut tag = Tag::new("h1".to_string());
+        let mut tag = Tag::new("h1");
         tag.set_attr("class", "target");
         p.set_tag(tag);
 
         let mut q = Dom::new(DomType::Tag);
-        let mut tag = Tag::new("h1".to_string());
+        let mut tag = Tag::new("h1");
         tag.set_attr("id", "q");
         tag.set_attr("class", "target");
         q.set_tag(tag);
@@ -285,12 +285,12 @@ mod tests {
     #[test]
     fn not_sufficient_condition() {
         let mut p = Dom::new(DomType::Tag);
-        let mut tag = Tag::new("h1".to_string());
+        let mut tag = Tag::new("h1");
         tag.set_attr("class", "target");
         p.set_tag(tag);
 
         let mut q = Dom::new(DomType::Tag);
-        let mut tag = Tag::new("h1".to_string());
+        let mut tag = Tag::new("h1");
         tag.set_attr("id", "q");
         q.set_tag(tag);
 
@@ -300,11 +300,11 @@ mod tests {
     #[test]
     fn text_sufficient_condition() {
         let mut p = Dom::new(DomType::Text);
-        let text = Text::new("def".to_string());
+        let text = Text::new("def");
         p.set_text(text);
 
         let mut q = Dom::new(DomType::Text);
-        let text = Text::new("abcdefghi".to_string());
+        let text = Text::new("abcdefghi");
         q.set_text(text);
 
         assert_eq!(Dom::p_implies_q(&p, &q), true);
@@ -317,20 +317,20 @@ mod tests {
         //   <ul>
         //     <li>
         let mut p = Dom::new(DomType::Tag);
-        let h1_tag = Tag::new("h1".to_string());
+        let h1_tag = Tag::new("h1");
         p.set_tag(h1_tag);
         // div
         let mut div_dom = Dom::new(DomType::Tag);
-        let div_tag = Tag::new("div".to_string());
+        let div_tag = Tag::new("div");
         div_dom.set_tag(div_tag);
         p.add_child(div_dom);
         // ul
         let mut ul_dom = Dom::new(DomType::Tag);
-        let ul_tag = Tag::new("ul".to_string());
+        let ul_tag = Tag::new("ul");
         ul_dom.set_tag(ul_tag);
         // li
         let mut li_dom = Dom::new(DomType::Tag);
-        let li_tag = Tag::new("li".to_string());
+        let li_tag = Tag::new("li");
         li_dom.set_tag(li_tag);
         ul_dom.add_child(li_dom);
         p.add_child(ul_dom);
@@ -340,21 +340,21 @@ mod tests {
         //   <ul>
         //     <li>
         let mut q = Dom::new(DomType::Tag);
-        let h1_tag = Tag::new("h1".to_string());
+        let h1_tag = Tag::new("h1");
         q.set_tag(h1_tag);
         // div
         let mut div_dom = Dom::new(DomType::Tag);
-        let mut div_tag = Tag::new("div".to_string());
+        let mut div_tag = Tag::new("div");
         div_tag.set_attr("id", "divid");
         div_dom.set_tag(div_tag);
         q.add_child(div_dom);
         // ul
         let mut ul_dom = Dom::new(DomType::Tag);
-        let ul_tag = Tag::new("ul".to_string());
+        let ul_tag = Tag::new("ul");
         ul_dom.set_tag(ul_tag);
         // li
         let mut li_dom = Dom::new(DomType::Tag);
-        let li_tag = Tag::new("li".to_string());
+        let li_tag = Tag::new("li");
         li_dom.set_tag(li_tag);
         ul_dom.add_child(li_dom);
         q.add_child(ul_dom);

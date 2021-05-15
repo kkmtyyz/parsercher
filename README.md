@@ -45,7 +45,7 @@ let html = r#"
 "#;
 
 if let Ok(root_dom) = parsercher::parse(&html) {
-    let mut needle = Tag::new("li".to_string());
+    let mut needle = Tag::new("li");
     needle.set_attr("class", "target");
 
     if let Some(texts) = parsercher::search_text_from_tag_children(&root_dom, &needle) {

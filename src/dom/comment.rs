@@ -12,8 +12,10 @@ impl Comment {
     ///
     /// # Arguments
     /// * `comment` - If `<!-- hello -->`, then `hello`.
-    pub fn new(comment: String) -> Comment {
-        Comment { comment }
+    pub fn new(comment: &str) -> Comment {
+        Comment {
+            comment: String::from(comment),
+        }
     }
 
     /// Returns the comment.
@@ -29,16 +31,16 @@ mod tests {
 
     #[test]
     fn eq_test() {
-        let a = Comment::new("a comment".to_string());
-        let b = Comment::new("a comment".to_string());
+        let a = Comment::new("a comment");
+        let b = Comment::new("a comment");
         assert_eq!(a == b, true);
         assert_eq!(a != b, false);
     }
 
     #[test]
     fn ne_test() {
-        let a = Comment::new("a comment".to_string());
-        let b = Comment::new("b comment".to_string());
+        let a = Comment::new("a comment");
+        let b = Comment::new("b comment");
         assert_eq!(a != b, true);
         assert_eq!(a == b, false);
     }

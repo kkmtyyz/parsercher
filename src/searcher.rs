@@ -16,7 +16,7 @@ use crate::dom::DomType;
 /// ```
 ///
 /// ```compile_fail
-/// let mut needle = Tag::new("li".to_string());
+/// let mut needle = Tag::new("li");
 /// needle.set_attr("class", "target");
 /// if let Some(tags) = parsercher::search_tag(&dom, &needle) {
 ///     println!("{:#?}", tags);
@@ -141,7 +141,7 @@ fn search_tag_from_name_exe(res: &mut Vec<Tag>, dom: &Dom, name: &str) {
 /// ```
 ///
 /// ```compile_fail
-/// let mut needle = Tag::new("li".to_string());
+/// let mut needle = Tag::new("li");
 /// let mut attr = HashMap::new();
 /// attr.insert("class".to_string(), "target".to_string());
 /// needle.set_attr(attr);

@@ -243,7 +243,7 @@ fn parse_tag_name(input: &mut Input, terminator: bool) -> Result<Tag, String> {
     }
 
     input.set_cursor(name_end);
-    let mut tag = Tag::new(input.get_string(name_bgn, name_end)?);
+    let mut tag = Tag::new(&input.get_string(name_bgn, name_end)?);
     tag.set_terminator(terminator);
 
     if input.expect('>') {
@@ -296,7 +296,7 @@ fn parse_comment(input: &mut Input) -> Result<Dom, String> {
     match input.find_str("-->") {
         Some(cursor) => {
             input.set_cursor(cursor + "-->".len()); // move cursor after "-->"
-            let comment = Comment::new(input.get_string(bgn, cursor)?);
+            let comment = Comment::new(&input.get_string(bgn, cursor)?);
             // TODO debug
             //println!("{:#?}", comment);
             let mut dom = Dom::new(DomType::Comment);
@@ -323,7 +323,7 @@ fn parse_text(input: &mut Input) -> Result<Dom, String> {
         }
     }
 
-    let text = Text::new(input.get_string(bgn, end)?);
+    let text = Text::new(&input.get_string(bgn, end)?);
     // TODO debug
     //println!("{:#?}", text);
     let mut dom = Dom::new(DomType::Text);
@@ -344,7 +344,7 @@ fn parse_text_script(input: &mut Input) -> Result<Dom, String> {
         None => return Err(String::from("Input ends in the middle of the tag")),
     }
 
-    let text = Text::new(input.get_string(bgn, end)?);
+    let text = Text::new(&input.get_string(bgn, end)?);
     let mut dom = Dom::new(DomType::Text);
     dom.set_text(text);
     return Ok(dom);
@@ -368,7 +368,7 @@ fn parse_doctype(input: &mut Input) -> Result<Dom, String> {
     let bgn = input.get_cursor();
     let end = bgn + "doctype".len();
     input.set_cursor(end); // move cursor to the ' ' before the "html"
-    let mut tag = Tag::new(input.get_string(bgn, end)?);
+    let mut tag = Tag::new(&input.get_string(bgn, end)?);
 
     input.next(); // move cursor to 'h'
 

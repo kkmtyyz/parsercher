@@ -11,7 +11,7 @@ fn main() {
 "#;
 
     if let Ok(dom) = parsercher::parse(&doc) {
-        let mut needle = Tag::new("li".to_string());
+        let mut needle = Tag::new("li");
         needle.set_attr("class", "target");
         if let Some(texts) = parsercher::search_text_from_tag_children(&dom, &needle) {
             assert_eq!(texts.len(), 2);
