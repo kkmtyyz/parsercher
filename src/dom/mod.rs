@@ -17,7 +17,7 @@ pub enum DomType {
 }
 
 /// A structure that represents the parsing result of a tag document.
-#[derive(Debug, PartialEq, Clone,)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Dom {
     /// Type of Dom structure
     pub dom_type: DomType,
@@ -263,8 +263,8 @@ impl Dom {
 
 #[cfg(test)]
 mod tests {
-    use crate::parser;
     use super::*;
+    use crate::parser;
 
     #[test]
     fn sufficient_condition() {

@@ -289,3 +289,67 @@ fn search_dom_exe(res: &mut Dom, dom: &Dom, needle: &Dom) {
         None => return,
     }
 }
+
+/// Returns the value of a specific attribute for all tags.
+///
+/// # Examples
+/// Get the value of the `target` attribute of all tags.
+///
+/// ```rust
+/// use parsercher;
+///
+/// let html = r#"
+/// <!DOCTYPE html>
+/// <html>
+///   <head>
+///     <meta charset="UTF-8">
+///     <meta target="value1">
+///     <title>sample html</title>
+///   </head>
+///   <body target="value2">
+///     <h1>sample</h1>
+///
+///     <div id="content" target="value3"></div>
+///
+///     <ol>
+///       <li>first</li>
+///       <li target="value4">second</li>
+///       <li>therd</li>
+///     </ol>
+///   </body>
+/// </html>
+/// "#;
+///
+/// let dom = parsercher::parse(&html).unwrap();
+///
+/// let values = parsercher::search_attr(&dom, "target").unwrap();
+/// assert_eq!(values.len(), 4);
+/// assert_eq!(values[0], "value1".to_string());
+/// assert_eq!(values[1], "value2".to_string());
+/// assert_eq!(values[2], "value3".to_string());
+/// assert_eq!(values[3], "value4".to_string());
+/// ```
+pub fn search_attr(dom: &Dom, attr: &str) -> Option<Vec<String>> {
+    let mut res: Vec<String> = Vec::new();
+    search_attr_exe(&mut res, dom, attr);
+    if res.is_empty() {
+        return None;
+    }
+    Some(res)
+}
+
+fn search_attr_exe(res: &mut Vec<String>, dom: &Dom, attr: &str) {
+    if DomType::Tag == dom.dom_type {
+        if let Some(tag) = dom.get_tag() {
+            if let Some(value) = tag.get_attr(attr) {
+                res.push(value);
+            }
+        }
+    }
+
+    if let Some(children) = dom.get_children() {
+        for child in children.iter() {
+            search_attr_exe(res, child, attr);
+        }
+    }
+}

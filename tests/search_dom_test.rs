@@ -58,7 +58,6 @@ fn search_dom() {
     // Remove `root`dom of needle_dom
     let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
 
-
     let root_dom = parsercher::search_dom(&dom, &needle_dom).unwrap();
 
     // root
