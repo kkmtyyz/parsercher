@@ -1,4 +1,3 @@
-use crate::dom::tag;
 use crate::dom::tag::Tag;
 use crate::dom::Dom;
 use crate::dom::DomType;
@@ -59,7 +58,7 @@ pub fn search_tag(dom: &Dom, needle: &Tag) -> Option<Vec<Tag>> {
 
 fn search_tag_exe(res: &mut Vec<Tag>, dom: &Dom, needle: &Tag) {
     if let Some(tag) = dom.get_tag() {
-        if tag::satisfy_sufficient_condition(needle, tag) {
+        if Tag::p_implies_q(needle, tag) {
             res.push(tag.clone());
         }
 
@@ -162,7 +161,7 @@ pub fn search_text_from_tag_children(dom: &Dom, needle: &Tag) -> Option<Vec<Stri
 
 fn search_text_from_tag_children_exe(res: &mut Vec<String>, dom: &Dom, needle: &Tag) {
     if let Some(tag) = dom.get_tag() {
-        if tag::satisfy_sufficient_condition(needle, tag) {
+        if Tag::p_implies_q(needle, tag) {
             if let Some(children) = dom.get_children() {
                 for child in children {
                     if let Some(text) = child.get_text() {

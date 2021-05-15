@@ -166,7 +166,7 @@ impl Dom {
             DomType::Tag => {
                 if let Some(q_tag) = q.get_tag() {
                     if let Some(p_tag) = p.get_tag() {
-                        return tag::satisfy_sufficient_condition(p_tag, q_tag);
+                        return Tag::p_implies_q(p_tag, q_tag);
                     }
                 }
             }

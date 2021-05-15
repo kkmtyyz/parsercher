@@ -153,62 +153,62 @@ impl Tag {
     pub fn is_terminator(&self) -> bool {
         self.terminator
     }
-}
 
-/// Returns true if p is a sufficient condition for q.
-/// `p => q`
-///
-/// # Examples
-/// ```rust
-/// use std::collections::HashMap;
-/// use parsercher::dom::Tag;
-///
-/// let mut p = Tag::new("h1");
-/// p.set_attr("class", "target");
-///
-/// let mut q = Tag::new("h1");
-/// q.set_attr("id", "q");
-/// q.set_attr("class", "target");
-///
-/// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), true);
-///
-/// let mut q = Tag::new("h1");
-/// q.set_attr("id", "q");
-///
-/// assert_eq!(parsercher::satisfy_sufficient_condition(&p, &q), false);
-/// ```
-pub fn satisfy_sufficient_condition(p: &Tag, q: &Tag) -> bool {
-    let mut satisfied = false;
-    // name
-    if q.get_name() == p.get_name() {
-        satisfied = true;
-    }
+    /// Returns true if p is a sufficient condition for q.
+    /// `p => q`
+    ///
+    /// # Examples
+    /// ```rust
+    /// use std::collections::HashMap;
+    /// use parsercher::dom::Tag;
+    ///
+    /// let mut p = Tag::new("h1");
+    /// p.set_attr("class", "target");
+    ///
+    /// let mut q = Tag::new("h1");
+    /// q.set_attr("id", "q");
+    /// q.set_attr("class", "target");
+    ///
+    /// assert_eq!(Tag::p_implies_q(&p, &q), true);
+    ///
+    /// let mut q = Tag::new("h1");
+    /// q.set_attr("id", "q");
+    ///
+    /// assert_eq!(Tag::p_implies_q(&p, &q), false);
+    /// ```
+    pub fn p_implies_q(p: &Tag, q: &Tag) -> bool {
+        let mut satisfied = false;
+        // name
+        if q.get_name() == p.get_name() {
+            satisfied = true;
+        }
 
-    // attr
-    if satisfied {
-        if let Some(p_attrs) = p.get_attrs() {
-            match q.get_attrs() {
-                Some(q_attrs) => {
-                    for (p_key, p_value) in p_attrs.iter() {
-                        match q_attrs.get(p_key) {
-                            Some(q_value) => {
-                                if p_value != "" && p_value != q_value {
+        // attr
+        if satisfied {
+            if let Some(p_attrs) = p.get_attrs() {
+                match q.get_attrs() {
+                    Some(q_attrs) => {
+                        for (p_key, p_value) in p_attrs.iter() {
+                            match q_attrs.get(p_key) {
+                                Some(q_value) => {
+                                    if p_value != "" && p_value != q_value {
+                                        satisfied = false;
+                                        break;
+                                    }
+                                }
+                                None => {
                                     satisfied = false;
                                     break;
                                 }
                             }
-                            None => {
-                                satisfied = false;
-                                break;
-                            }
                         }
                     }
+                    None => satisfied = false,
                 }
-                None => satisfied = false,
             }
         }
+        satisfied
     }
-    satisfied
 }
 
 #[cfg(test)]
@@ -238,7 +238,7 @@ mod tests {
         q.set_attr("id", "q");
         q.set_attr("class", "target");
 
-        assert_eq!(satisfy_sufficient_condition(&p, &q), true);
+        assert_eq!(Tag::p_implies_q(&p, &q), true);
     }
 
     #[test]
@@ -249,7 +249,7 @@ mod tests {
         let mut q = Tag::new("h1");
         q.set_attr("id", "q");
 
-        assert_eq!(satisfy_sufficient_condition(&p, &q), false);
+        assert_eq!(Tag::p_implies_q(&p, &q), false);
     }
 
     #[test]

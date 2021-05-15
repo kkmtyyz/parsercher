@@ -497,8 +497,6 @@ mod searcher;
 pub use parser::parse;
 pub use parser::print_dom_tree;
 
-pub use dom::tag::satisfy_sufficient_condition;
-
 pub use searcher::search_attr;
 pub use searcher::search_dom;
 pub use searcher::search_tag;
