@@ -46,8 +46,8 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
-[3.1.0]: https://github.com/kkmtyyz/parsercher/compare/3.0.0...3.1.0
-[3.0.0]: https://github.com/kkmtyyz/parsercher/compare/2.1.0...3.0.0
-[2.1.0]: https://github.com/kkmtyyz/parsercher/compare/2.0.0...2.1.0
-[2.0.0]: https://github.com/kkmtyyz/parsercher/compare/1.0.0...2.0.0
-[1.0.0]: https://github.com/kkmtyyz/parsercher/compare/1.0.0
+[3.1.0]: https://github.com/kkmtyyz/parsercher/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/kkmtyyz/parsercher/compare/v2.1.0...v3.0.0
+[2.1.0]: https://github.com/kkmtyyz/parsercher/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/kkmtyyz/parsercher/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/kkmtyyz/parsercher/compare/v1.0.0
