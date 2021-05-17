@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.1.1] - 2021-05-18
+
+### Fixes
+- Fixed a bug where `Input.set_cursor ()` could move the cursor after EOF.
+
+
 ## [3.1.0] - 2021-05-16
 
 ### Additions
@@ -46,6 +52,7 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
+[3.1.1]: https://github.com/kkmtyyz/parsercher/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/kkmtyyz/parsercher/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/kkmtyyz/parsercher/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/kkmtyyz/parsercher/compare/v2.0.0...v2.1.0
