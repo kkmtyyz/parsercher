@@ -376,7 +376,7 @@ mod tests {
           </ul>
         </body>
         "#;
-        let a_dom = parser::parse(&a);
+        let a_dom = parser::parse(&a).unwrap();
 
         let b = r#"
         <head>
@@ -390,7 +390,7 @@ mod tests {
           </ul>
         </body>
         "#;
-        let b_dom = parser::parse(&b);
+        let b_dom = parser::parse(&b).unwrap();
 
         assert_eq!(a_dom == b_dom, true);
         assert_eq!(a_dom != b_dom, false);
@@ -410,7 +410,7 @@ mod tests {
           </ul>
         </body>
         "#;
-        let a_dom = parser::parse(&a);
+        let a_dom = parser::parse(&a).unwrap();
 
         let b = r#"
         <head>
@@ -424,7 +424,7 @@ mod tests {
           </ul>
         </body>
         "#;
-        let b_dom = parser::parse(&b);
+        let b_dom = parser::parse(&b).unwrap();
 
         assert_eq!(a_dom == b_dom, false);
         assert_eq!(a_dom != b_dom, true);

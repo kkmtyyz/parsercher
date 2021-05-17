@@ -15,6 +15,7 @@ impl Input {
     pub fn set_cursor(&mut self, cursor: usize) {
         if self.input.len() <= cursor {
             self.cursor = self.input.len() - 1;
+            return;
         }
         self.cursor = cursor;
     }
