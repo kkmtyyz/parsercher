@@ -114,14 +114,16 @@ pub fn parse(doc: &str) -> Result<Dom, String> {
 /// Returns the value of the tag's attribute.
 ///
 /// State to receive:
-/// The cursor points to the first '"'.
+/// The cursor points to the first '"' or first '\''.
 /// "<value>"
-fn parse_tag_attr_value(input: &mut Input) -> Result<String, String> {
-    input.next(); // move cursor to after '"'
+/// or
+/// '<value>'
+fn parse_tag_attr_value(input: &mut Input, dlmt: char) -> Result<String, String> {
+    input.next(); // move cursor to after '"' or '\''
     let value_bgn = input.get_cursor();
 
     let value_end;
-    match input.find('"') {
+    match input.find(dlmt) {
         Some(cursor) => value_end = cursor,
         None => return Err(String::from("Input ends in the middle of double quote")),
     }
@@ -140,6 +142,8 @@ fn parse_tag_attr_value(input: &mut Input) -> Result<String, String> {
 /// State to receive:
 /// The cursor points to the first character of <attr>.
 /// <attr>[ = "<value>"] [/]>
+/// or
+/// <attr>[ = '<value>'] [/]>
 fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
     // get the end position of the tag
     let tag_end;
@@ -188,7 +192,12 @@ fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
                     input.set_cursor(cursor); // move cursor to '='
                     input.next_char(); // move cursor to after '='
                     if input.expect('"') {
-                        match parse_tag_attr_value(input) {
+                        match parse_tag_attr_value(input, '"') {
+                            Ok(v) => value = v,
+                            Err(e) => return Err(e),
+                        }
+                    } else if input.expect('\'') {
+                        match parse_tag_attr_value(input, '\'') {
                             Ok(v) => value = v,
                             Err(e) => return Err(e),
                         }
@@ -222,6 +231,8 @@ fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
 /// State to receive:
 /// The cursor points to the first character of <tag_name>.
 /// <tag_name> [<attr>[="<value>"]] [/]>
+/// or
+/// <tag_name> [<attr>[='<value>']] [/]>
 fn parse_tag_name(input: &mut Input, terminator: bool) -> Result<Tag, String> {
     // Get the start position of the tag name
     let name_bgn = input.get_cursor();
@@ -267,6 +278,8 @@ fn parse_tag_name(input: &mut Input, terminator: bool) -> Result<Tag, String> {
 /// State to receive:
 /// The cursor points to the first '<'.
 /// <[/]<tag_name> [<attr>[="<value>"]] [/]>
+/// or
+/// <[/]<tag_name> [<attr>[='<value>']] [/]>
 fn parse_tag(input: &mut Input) -> Result<Dom, String> {
     input.next(); // move cursor to after '<'
 
