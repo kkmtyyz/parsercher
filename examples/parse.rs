@@ -11,7 +11,8 @@ fn main() {
   <body>
     <h1>Hello, world!</h1>
 
-    <div id="content"></div>
+    <div 
+    id="content"></div>
 
     <ol>
       <li>first</li>

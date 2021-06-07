@@ -227,6 +227,7 @@ fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
 }
 
 /// Parse the tag name.
+/// the tag name is trimmed.
 ///
 /// State to receive:
 /// The cursor points to the first character of <tag_name>.
@@ -254,7 +255,9 @@ fn parse_tag_name(input: &mut Input, terminator: bool) -> Result<Tag, String> {
     }
 
     input.set_cursor(name_end);
-    let mut tag = Tag::new(&input.get_string(name_bgn, name_end)?);
+    let tag_name = input.get_string(name_bgn, name_end)?;
+    let tag_name = tag_name.trim();
+    let mut tag = Tag::new(tag_name);
     tag.set_terminator(terminator);
 
     if input.expect('>') {
