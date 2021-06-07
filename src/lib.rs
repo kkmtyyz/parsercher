@@ -9,7 +9,7 @@
 //! Add this to your `Cargo.toml`:
 //! ```text
 //! [dependencies]
-//! parsercher = "3.1.2"
+//! parsercher = "3.1.3"
 //! ```
 //!
 //! # Examples

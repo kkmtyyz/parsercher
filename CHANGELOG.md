@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.3] - 2021-06-07
+
+### Fixes
+
+- Fixed to trim the tag name.
+
+
 ## [3.1.2] - 2021-05-26
 
 ### Changes
@@ -59,6 +66,7 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
+[3.1.3]: https://github.com/kkmtyyz/parsercher/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/kkmtyyz/parsercher/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/kkmtyyz/parsercher/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/kkmtyyz/parsercher/compare/v3.0.0...v3.1.0
