@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.4] - 2021-08-26
+
+### Fixes
+
+- Fixed parsing of tag terminal symbol `>`.
+
+
 ## [3.1.3] - 2021-06-07
 
 ### Fixes
@@ -66,6 +73,7 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
+[3.1.4]: https://github.com/kkmtyyz/parsercher/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/kkmtyyz/parsercher/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/kkmtyyz/parsercher/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/kkmtyyz/parsercher/compare/v3.1.0...v3.1.1
