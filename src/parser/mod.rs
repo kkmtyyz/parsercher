@@ -137,6 +137,34 @@ fn parse_tag_attr_value(input: &mut Input, dlmt: char) -> Result<String, String>
     input.get_string(value_bgn, value_end)
 }
 
+/// Get the cursor position at the end of tag.
+///
+/// <tag attr="value" >
+///                   ^
+///                   Return this position.
+fn get_tag_end(input: &mut Input) -> Result<usize, String> {
+    let save_cursol_pos = input.get_cursor();
+    let mut res = 0;
+
+    let mut in_dquote = false;
+    while !input.is_end() {
+        input.next_char();
+        if input.expect('\"') {
+            in_dquote = !in_dquote;
+        }
+        if !in_dquote && input.expect('>') {
+            res = input.get_cursor();
+            break;
+        }
+    }
+
+    input.set_cursor(save_cursol_pos);
+    match res {
+        0 => return Err(String::from("Input ends in the middle of the tag")),
+        _ => return Ok(res),
+    }
+}
+
 /// Parse tag attributes.
 ///
 /// State to receive:
@@ -146,11 +174,7 @@ fn parse_tag_attr_value(input: &mut Input, dlmt: char) -> Result<String, String>
 /// <attr>[ = '<value>'] [/]>
 fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
     // get the end position of the tag
-    let tag_end;
-    match input.find('>') {
-        Some(cursor) => tag_end = cursor,
-        None => return Err(String::from("Input ends in the middle of the tag")),
-    }
+    let tag_end = get_tag_end(input)?;
 
     let mut attr_map = HashMap::new();
 
@@ -239,11 +263,7 @@ fn parse_tag_name(input: &mut Input, terminator: bool) -> Result<Tag, String> {
     let name_bgn = input.get_cursor();
 
     // get the end position of the tag
-    let tag_end;
-    match input.find('>') {
-        Some(cursor) => tag_end = cursor,
-        None => return Err(String::from("Input ends in the middle of the tag")),
-    }
+    let tag_end = get_tag_end(input)?;
 
     let mut name_end = tag_end;
 
