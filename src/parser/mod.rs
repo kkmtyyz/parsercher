@@ -118,14 +118,28 @@ pub fn parse(doc: &str) -> Result<Dom, String> {
 /// "<value>"
 /// or
 /// '<value>'
-fn parse_tag_attr_value(input: &mut Input, dlmt: char) -> Result<String, String> {
-    input.next(); // move cursor to after '"' or '\''
+/// or
+/// value
+fn parse_tag_attr_value(input: &mut Input, tag_end: usize, dlmt: char) -> Result<String, String> {
+    if dlmt != ' '{
+        input.next(); // move cursor to after '"' or '\''
+    }
     let value_bgn = input.get_cursor();
 
     let value_end;
     match input.find(dlmt) {
-        Some(cursor) => value_end = cursor,
-        None => return Err(String::from("Input ends in the middle of double quote")),
+        Some(cursor) => {
+            if cursor < tag_end {
+                value_end = cursor;
+            } else if dlmt == ' ' {
+                value_end = tag_end;
+            } else {
+                return Err(format!("There is no delimiter({}) to terminate the attribute.", dlmt));
+            }
+        },
+        None => {
+                return Err(format!("Input ends in the middle of delimiter({})", dlmt));
+        },
     }
 
     if value_bgn == value_end {
@@ -172,6 +186,8 @@ fn get_tag_end(input: &mut Input) -> Result<usize, String> {
 /// <attr>[ = "<value>"] [/]>
 /// or
 /// <attr>[ = '<value>'] [/]>
+/// or
+/// <attr>[ = <value>] [/]>
 fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
     // get the end position of the tag
     let tag_end = get_tag_end(input)?;
@@ -216,12 +232,17 @@ fn parse_tag_attr(input: &mut Input, mut tag: Tag) -> Result<Tag, String> {
                     input.set_cursor(cursor); // move cursor to '='
                     input.next_char(); // move cursor to after '='
                     if input.expect('"') {
-                        match parse_tag_attr_value(input, '"') {
+                        match parse_tag_attr_value(input, tag_end, '"') {
                             Ok(v) => value = v,
                             Err(e) => return Err(e),
                         }
                     } else if input.expect('\'') {
-                        match parse_tag_attr_value(input, '\'') {
+                        match parse_tag_attr_value(input, tag_end, '\'') {
+                            Ok(v) => value = v,
+                            Err(e) => return Err(e),
+                        }
+                    } else {
+                        match parse_tag_attr_value(input, tag_end, ' ') {
                             Ok(v) => value = v,
                             Err(e) => return Err(e),
                         }
