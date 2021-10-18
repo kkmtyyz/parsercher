@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.5] - 2021-10-18
+
+### Changes
+
+- Added support for parsing tag attributes enclosed in space(` `).
+
+
 ## [3.1.4] - 2021-08-26
 
 ### Fixes
@@ -73,6 +80,7 @@
 ## [1.0.0] - 2021-05-08
 Initial release.
 
+[3.1.5]: https://github.com/kkmtyyz/parsercher/compare/v3.1.4...v3.1.5
 [3.1.4]: https://github.com/kkmtyyz/parsercher/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/kkmtyyz/parsercher/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/kkmtyyz/parsercher/compare/v3.1.1...v3.1.2
