@@ -3,7 +3,7 @@ extern crate parsercher;
 use parsercher::dom::DomType;
 
 #[test]
-fn search_dom() {
+fn search() {
     let html = r#"
 <!DOCTYPE html>
 <html>
@@ -54,7 +54,7 @@ fn search_dom() {
 </ul>
 "#;
 
-    let res = dom.search(&needle).unwrap();
+    let res = dom.search(&needle).unwrap().unwrap();
 
     assert_eq!(res.len(), 2);
 

@@ -8,6 +8,9 @@ pub use comment::Comment;
 pub use tag::Tag;
 pub use text::Text;
 
+use crate::parser;
+use crate::searcher;
+
 /// Type of Dom structure.
 #[derive(Debug, PartialEq, Clone)]
 pub enum DomType {
@@ -262,8 +265,19 @@ impl Dom {
 
     /// Return the `needle`-like subtree from the Dom structure tree.
     /// The `needle` argument must be parsable html.
-    pub fn search(&self, needle: &str) -> Option<Vec<Dom>> {
-        None
+    pub fn search(&self, needle: &str) -> Result<Option<Vec<Box<Dom>>>, String> {
+        let needle = parser::parse(&needle)?;
+        let needle = needle.get_children().unwrap().get(0).unwrap();
+        let root_dom = match searcher::search_dom(&self, &needle) {
+            Some(root_dom) => root_dom,
+            None => return Ok(None),
+        };
+        match root_dom.get_children() {
+            Some(children) => {
+                return Ok(Some(children.clone()));
+            }
+            None => Ok(None),
+        }
     }
 }
 

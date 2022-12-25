@@ -121,7 +121,7 @@ pub fn parse(doc: &str) -> Result<Dom, String> {
 /// or
 /// value
 fn parse_tag_attr_value(input: &mut Input, tag_end: usize, dlmt: char) -> Result<String, String> {
-    if dlmt != ' '{
+    if dlmt != ' ' {
         input.next(); // move cursor to after '"' or '\''
     }
     let value_bgn = input.get_cursor();
@@ -134,12 +134,15 @@ fn parse_tag_attr_value(input: &mut Input, tag_end: usize, dlmt: char) -> Result
             } else if dlmt == ' ' {
                 value_end = tag_end;
             } else {
-                return Err(format!("There is no delimiter({}) to terminate the attribute.", dlmt));
+                return Err(format!(
+                    "There is no delimiter({}) to terminate the attribute.",
+                    dlmt
+                ));
             }
-        },
+        }
         None => {
-                return Err(format!("Input ends in the middle of delimiter({})", dlmt));
-        },
+            return Err(format!("Input ends in the middle of delimiter({})", dlmt));
+        }
     }
 
     if value_bgn == value_end {
