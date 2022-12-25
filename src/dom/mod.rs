@@ -259,6 +259,12 @@ impl Dom {
         }
         true
     }
+
+    /// Return the `needle`-like subtree from the Dom structure tree.
+    /// The `needle` argument must be parsable html.
+    pub fn search(&self, needle: &str) -> Option<Vec<Dom>> {
+        None
+    }
 }
 
 #[cfg(test)]
