@@ -267,15 +267,14 @@ impl Dom {
     /// The `needle` argument must be parsable html.
     pub fn search(&self, needle: &str) -> Result<Option<Vec<Box<Dom>>>, String> {
         let needle = parser::parse(&needle)?;
+        // remove root dom
         let needle = needle.get_children().unwrap().get(0).unwrap();
         let root_dom = match searcher::search_dom(&self, &needle) {
             Some(root_dom) => root_dom,
             None => return Ok(None),
         };
         match root_dom.get_children() {
-            Some(children) => {
-                return Ok(Some(children.clone()));
-            }
+            Some(children) => Ok(Some(children.clone())),
             None => Ok(None),
         }
     }
