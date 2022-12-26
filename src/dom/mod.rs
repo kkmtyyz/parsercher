@@ -265,6 +265,86 @@ impl Dom {
 
     /// Return the `needle`-like subtree from the Dom structure tree.
     /// The `needle` argument must be parsable html.
+    ///
+    /// # Examples
+    /// Get the subtree that satisfies the following tag names and attribute values.
+    /// ```text
+    /// <ul class="targetList">
+    ///   <li class="key1></li>
+    ///   <li class="key2></li>
+    /// </ul>
+    /// ```
+    ///
+    /// ```rust
+    /// use parsercher;
+    ///
+    /// let html = r#"
+    /// <body>
+    ///   <ul id="list1" class="targetList">
+    ///     <li class="key1">1-1</li>
+    ///     <li class="key2">
+    ///       <span>1-2</span>
+    ///     </li>
+    ///   </ul>
+    ///
+    ///   <ul id="list2">
+    ///     <li class="key1">2-1</li>
+    ///     <li>2-2</li>
+    ///   </ul>
+    ///
+    ///   <div>
+    ///     <div>
+    ///       <ul class="targetList">
+    ///         <ul id="list3" class="targetList">
+    ///           <li class="key1">3-1</li>
+    ///           <li class="item">3-2</li>
+    ///           <li class="key2">3-3</li>
+    ///         </ul>
+    ///       </ul>
+    ///     </div>
+    ///   </div>
+    ///
+    ///   <ul id="list4">
+    ///     <li class="key1">4-1</li>
+    ///     <li class="key2">4-2</li>
+    ///   </ul>
+    ///
+    /// </body>
+    /// "#;
+    ///
+    /// let root_dom = parsercher::parse(&html).unwrap();
+    ///
+    /// let needle = r#"
+    /// <ul class="targetList">
+    ///   <li class="key1"></li>
+    ///   <li class="key2"></li>
+    /// </ul>
+    /// "#;
+    /// let result = root_dom.search(&needle).unwrap().unwrap();
+    ///
+    /// assert!(result.len() == 2);
+    ///
+    /// for dom in result.iter() {
+    ///     parsercher::print_dom_tree(&dom);
+    /// }
+    ///
+    /// ```
+    /// output:
+    /// ```text
+    /// <ul class="targetList" id="list1">
+    ///   <li class="key1">
+    ///     TEXT: "1-1"
+    ///   <li class="key2">
+    ///     <span>
+    ///       TEXT: "1-2"
+    /// <ul class="targetList" id="list3">
+    ///   <li class="key1">
+    ///     TEXT: "3-1"
+    ///   <li class="item">
+    ///     TEXT: "3-2"
+    ///   <li class="key2">
+    ///     TEXT: "3-3"
+    /// ```
     pub fn search(&self, needle: &str) -> Result<Option<Vec<Box<Dom>>>, String> {
         let needle = parser::parse(&needle)?;
         // remove root dom

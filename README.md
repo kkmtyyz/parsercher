@@ -1,7 +1,7 @@
 # parsercher
 
 [![Crate](https://img.shields.io/crates/v/parsercher.svg)](https://crates.io/crates/parsercher)
-[![API](https://img.shields.io/badge/api-3.1.5-green.svg)](https://docs.rs/parsercher)
+[![API](https://img.shields.io/badge/api-3.1.6-green.svg)](https://docs.rs/parsercher)
 
 **Parses and searches Tag documents. (e.g. HTML, XML)**
 
@@ -14,7 +14,7 @@ parsercher parses documents written in tags such as HTML and XML.
 Add this to your `Cargo.toml`:
 ```
 [dependencies]
-parsercher = "3.1.5"
+parsercher = "3.1.6"
 ```
 
 ## License
@@ -114,30 +114,27 @@ let needle = r#"
   <li class="key2"></li>
 </ul>
 "#;
-let needle_dom = parsercher::parse(&needle).unwrap();
-// Remove `root`dom of needle_dom
-let needle_dom = needle_dom.get_children().unwrap().get(0).unwrap();
+let result = root_dom.search(&needle).unwrap().unwrap();
 
-if let Some(dom) = parsercher::search_dom(&root_dom, &needle_dom) {
+for dom in result.iter() {
     parsercher::print_dom_tree(&dom);
 }
 ```
 output:
 ```text
-<root>
-  <ul id="list1" class="targetList">
-    <li class="key1">
-      TEXT: "1-1"
-    <li class="key2">
-      <span>
-        TEXT: "1-2"
-  <ul id="list3" class="targetList">
-    <li class="key1">
-      TEXT: "3-1"
-    <li class="item">
-      TEXT: "3-2"
-    <li class="key2">
-      TEXT: "3-3"
+<ul class="targetList" id="list1">
+  <li class="key1">
+    TEXT: "1-1"
+  <li class="key2">
+    <span>
+      TEXT: "1-2"
+<ul class="targetList" id="list3">
+  <li class="key1">
+    TEXT: "3-1"
+  <li class="item">
+    TEXT: "3-2"
+  <li class="key2">
+    TEXT: "3-3"
 ```
 
 **More complex examples of Dom structure tree**

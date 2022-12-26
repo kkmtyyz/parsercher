@@ -55,6 +55,7 @@ fn search() {
 "#;
 
     let res = dom.search(&needle).unwrap().unwrap();
+    println!("{:?}", res);
 
     assert_eq!(res.len(), 2);
 
