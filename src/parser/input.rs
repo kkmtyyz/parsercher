@@ -30,9 +30,10 @@ impl Input {
 
     /// Move the `self.cursor` to the next character.
     pub fn next(&mut self) {
-        if self.cursor < self.input.len() - 1 {
-            self.cursor += 1;
+        if self.input.len() - 1 <= self.cursor {
+            return;
         }
+        self.cursor += 1;
     }
 
     /// Move the self.cursor to the next character.
@@ -203,8 +204,9 @@ mod tests {
         }
     }
 
+    // Input::new()
     #[test]
-    fn empty_input() {
+    fn new_input_with_empty_str() {
         assert!(Input::new("").is_err())
     }
 
@@ -214,5 +216,47 @@ mod tests {
         assert_eq!(input.get_input(), vec!('t', 'e', 's', 't'));
         assert_eq!(input.get_cursor(), 0);
         Ok(())
+    }
+
+    // Input.set_cursor()
+    #[test]
+    fn set_cursor_less_than_input_len() {
+        let mut input = Input::new("test").unwrap();
+        input.set_cursor(2);
+        assert_eq!(input.get_cursor(), 2);
+    }
+
+    #[test]
+    fn set_cursor_equal_input_len() {
+        let mut input = Input::new("test").unwrap();
+        input.set_cursor(4);
+        assert_eq!(input.get_cursor(), 3);
+    }
+
+    #[test]
+    fn set_cursor_greater_than_input_len() {
+        let mut input = Input::new("test").unwrap();
+        input.set_cursor(10);
+        assert_eq!(input.get_cursor(), 3);
+    }
+
+    // Input.next()
+    #[test]
+    fn next() {
+        let mut input = Input::new("test").unwrap();
+        assert_eq!(input.get_cursor(), 0);
+        input.next();
+        assert_eq!(input.get_cursor(), 1);
+        input.next();
+        assert_eq!(input.get_cursor(), 2);
+    }
+
+    #[test]
+    fn next_longer_than_input() {
+        let mut input = Input::new("test").unwrap();
+        for _ in 0..10 {
+            input.next();
+        }
+        assert_eq!(input.get_cursor(), 3);
     }
 }
