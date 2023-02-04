@@ -5,11 +5,15 @@ pub struct Input {
 }
 
 impl Input {
-    pub fn new(input: &str) -> Input {
-        Input {
+    pub fn new(input: &str) -> Result<Input, String> {
+        if input.len() == 0 {
+            return Err(String::from("input is empty."));
+        }
+
+        Ok(Input {
             input: input.trim_end().chars().collect(),
             cursor: 0,
-        }
+        })
     }
 
     pub fn set_cursor(&mut self, cursor: usize) {
@@ -186,5 +190,29 @@ impl Input {
         }
 
         Ok(s)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    impl Input {
+        pub fn get_input(&self) -> Vec<char>{
+            self.input.clone()
+        }
+    }
+
+    #[test]
+    fn empty_input() {
+        assert!(Input::new("").is_err())
+    }
+
+    #[test]
+    fn new_input() -> Result<(), String> {
+        let input = Input::new("test")?;
+        assert_eq!(input.get_input(), vec!('t', 'e', 's', 't'));
+        assert_eq!(input.get_cursor(), 0);
+        Ok(())
     }
 }

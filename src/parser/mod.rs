@@ -102,7 +102,7 @@ use input::Input;
 /// ```
 ///
 pub fn parse(doc: &str) -> Result<Dom, String> {
-    let mut input = Input::new(doc);
+    let mut input = Input::new(doc)?;
     let mut dom_vec = create_dom_vec(&mut input)?;
     //debug_print_dom_vec(&dom_vec);
 
