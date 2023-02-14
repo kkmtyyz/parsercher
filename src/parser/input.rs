@@ -259,4 +259,105 @@ mod tests {
         }
         assert_eq!(input.get_cursor(), 3);
     }
+
+    // Input.next_char()
+    #[test]
+    fn next_char() {
+        let mut input = Input::new("test").unwrap();
+        assert_eq!(input.get_cursor(), 0);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 1);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 2);
+    }
+
+    #[test]
+    fn next_char_skip_space() {
+        let mut input = Input::new(" te s t").unwrap();
+        assert_eq!(input.get_cursor(), 0);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 1);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 2);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 4);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 6);
+    }
+
+    #[test]
+    fn next_char_skip_line_feed() {
+        let mut input = Input::new("\nte\ns\nt").unwrap();
+        assert_eq!(input.get_cursor(), 0);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 1);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 2);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 4);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 6);
+    }
+
+    #[test]
+    fn next_char_skip_space_line_feed() {
+        let mut input = Input::new("\nt   e \ns  \nt\n ").unwrap();
+        assert_eq!(input.get_cursor(), 0);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 1);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 5);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 8);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 12);
+        input.next_char();
+        assert_eq!(input.get_cursor(), 12);
+    }
+
+    // Input.is_end()
+    #[test]
+    fn is_end() {
+        let mut input = Input::new("test").unwrap();
+        assert_eq!(input.is_end(), false);
+        input.set_cursor(3);
+        assert_eq!(input.is_end(), true);
+    }
+
+    // Input.expect()
+    #[test]
+    fn expect() {
+        let mut input = Input::new("test").unwrap();
+        assert_eq!(input.expect('t'), true);
+        assert_eq!(input.expect('x'), false);
+        input.next();
+        assert_eq!(input.expect('e'), true);
+        assert_eq!(input.expect('x'), false);
+    }
+
+    // Input.expect_str()
+    #[test]
+    fn expect_str() {
+        let mut input = Input::new("TeSt").unwrap();
+        assert_eq!(input.expect_str("TeS"), true);
+        assert_eq!(input.expect_str("tes"), false);
+        assert_eq!(input.expect_str("est"), false);
+        input.next();
+        assert_eq!(input.expect_str("eSt"), true);
+        assert_eq!(input.expect_str("est"), false);
+        assert_eq!(input.expect_str("test"), false);
+    }
+
+    // Input.expect_str_insensitive()
+    #[test]
+    fn expect_str_insensitive() {
+        let mut input = Input::new("TeSt").unwrap();
+        assert_eq!(input.expect_str_insensitive("TeS"), true);
+        assert_eq!(input.expect_str_insensitive("tes"), true);
+        assert_eq!(input.expect_str_insensitive("est"), false);
+        input.next();
+        assert_eq!(input.expect_str_insensitive("eSt"), true);
+        assert_eq!(input.expect_str_insensitive("est"), true);
+        assert_eq!(input.expect_str_insensitive("test"), false);
+    }
 }
