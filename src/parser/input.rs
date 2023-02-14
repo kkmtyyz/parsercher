@@ -39,16 +39,14 @@ impl Input {
     /// Move the self.cursor to the next character.
     /// Skip ' ' and '\n'.
     pub fn next_char(&mut self) {
-        if self.cursor < self.input.len() - 1 {
-            self.cursor += 1;
+        if self.input.len() - 1 <= self.cursor {
+            return;
         }
+        self.cursor += 1;
 
         let bgn = self.cursor;
         for i in bgn..self.input.len() {
             if self.input[i] == ' ' || self.input[i] == '\n' {
-                if self.cursor == self.input.len() - 1 {
-                    break;
-                }
                 self.cursor += 1;
             } else {
                 break;
