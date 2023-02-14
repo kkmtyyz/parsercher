@@ -216,6 +216,14 @@ mod tests {
         Ok(())
     }
 
+    #[test]
+    fn new_input_trim_end() -> Result<(), String> {
+        let input = Input::new("test  \n")?;
+        assert_eq!(input.get_input(), vec!('t', 'e', 's', 't'));
+        assert_eq!(input.get_cursor(), 0);
+        Ok(())
+    }
+
     // Input.set_cursor()
     #[test]
     fn set_cursor_less_than_input_len() {
